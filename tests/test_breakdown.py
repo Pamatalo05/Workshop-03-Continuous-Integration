@@ -35,3 +35,30 @@ def test_r7_total_is_rounded_half_up():
 def test_r7_invalid_selection_returns_minus_one():
     """R7: an invalid selection gives -1."""
     assert calculate_total("GOLD", [], 1) == INVALID
+
+
+def test_r5_uses_the_amount_after_the_group_discount():
+    """R5 is applied after R4: 210 - 21 = 189 is not above 200, so no offer."""
+    quote = build_quote("PREMIUM", [], 3)
+    assert quote.subtotal == Decimal("210")
+    assert quote.group_discount == Decimal("21")
+    assert quote.special_offer == 0
+    assert quote.total == 189
+
+
+def test_r6_uses_the_amount_after_the_special_offer():
+    """R6 is applied after R5: (420 - 42 - 20) x 1.15 = 411.7, rounded to 412."""
+    quote = build_quote("PREMIUM", ["SPA", "SPECIALIZED_PROGRAM"], 3)
+    assert quote.special_offer == Decimal("20")
+    assert quote.premium_surcharge == Decimal("53.70")
+    assert quote.total == 412
+
+
+def test_r4_r5_r6_together_with_the_high_offer():
+    """R4, R5 (-50 above 400) and R6 together: (620 - 62 - 50) x 1.15 = 584.2 -> 584."""
+    quote = build_quote("PREMIUM", ["SPA", "SPECIALIZED_PROGRAM", "GROUP_CLASSES"], 4)
+    assert quote.subtotal == Decimal("620")
+    assert quote.group_discount == Decimal("62")
+    assert quote.special_offer == Decimal("50")
+    assert quote.premium_surcharge == Decimal("76.2")
+    assert quote.total == 584
