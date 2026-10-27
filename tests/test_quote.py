@@ -36,3 +36,30 @@ def test_r3_subtotal_adds_every_extra():
 def test_r7_rounds_half_up(amount, expected):
     """R7: halves go up (122.5 -> 123, unlike round()), the rest to the nearest."""
     assert round_half_up(amount) == expected
+
+
+@pytest.mark.parametrize(
+    "plan, extras, members, expected",
+    [
+        ("BASIC", ["GROUP_CLASSES"], 2, Decimal("90")),
+        ("STANDARD", ["PERSONAL_TRAINING"], 1, Decimal("70")),
+        ("PREMIUM", ["GROUP_CLASSES", "SPA"], 2, Decimal("230")),
+        ("PREMIUM", ["SPA", "SPECIALIZED_PROGRAM"], 3, Decimal("420")),
+    ],
+)
+def test_r3_subtotal_of_workshop_rows(plan, extras, members, expected):
+    """R3: subtotal of several rows of the workshop table, before any discount."""
+    assert calculate_subtotal(plan, extras, members) == expected
+
+
+def test_r3_subtotal_does_not_depend_on_extras_order():
+    """R3: the order in which the extras are chosen does not change the subtotal."""
+    first = calculate_subtotal("PREMIUM", ["SPA", "GROUP_CLASSES"], 2)
+    second = calculate_subtotal("PREMIUM", ["GROUP_CLASSES", "SPA"], 2)
+    assert first == second
+
+
+@pytest.mark.parametrize("amount, expected", [(0.5, 1), (122.5, 123), (626.0, 626)])
+def test_r7_rounds_float_amounts_half_up(amount, expected):
+    """R7: float amounts are rounded half up too (122.5 -> 123, unlike round())."""
+    assert round_half_up(amount) == expected
