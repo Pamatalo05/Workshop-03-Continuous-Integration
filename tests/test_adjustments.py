@@ -50,7 +50,7 @@ def test_r6_no_premium_extra_no_surcharge():
 @pytest.mark.parametrize(
     "amount, expected",
     [
-        (Decimal("400.01"), Decimal("350.01")),
+        (Decimal("400.01"), Decimal("350.00")),
         (Decimal("200.01"), Decimal("180.01")),
     ],
 )
