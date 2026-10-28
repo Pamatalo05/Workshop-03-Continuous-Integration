@@ -16,6 +16,12 @@ pytest
 pylint $(git ls-files '*.py')
 ```
 
+## Run the command line
+
+```bash
+python -m gym_quote.cli
+```
+
 ## Team workflow
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for roles, branches and the agreed function signatures.
