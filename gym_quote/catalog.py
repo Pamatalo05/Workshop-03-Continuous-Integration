@@ -24,6 +24,7 @@ def is_valid_plan(plan):
     return plan in PLANS
 
 
+
 def has_premium_extra(extras):
     """Return True if the selection includes at least one premium extra."""
     return any(extra in PREMIUM_EXTRAS for extra in extras)
