@@ -45,3 +45,15 @@ def test_r6_premium_extra_adds_fifteen_percent():
 def test_r6_no_premium_extra_no_surcharge():
     """R6: no surcharge without premium extras."""
     assert apply_premium_surcharge(Decimal("100"), False) == Decimal("100")
+
+
+@pytest.mark.parametrize(
+    "amount, expected",
+    [
+        (Decimal("400.01"), Decimal("350.01")),
+        (Decimal("200.01"), Decimal("180.01")),
+    ],
+)
+def test_r5_limits_with_cents(amount, expected):
+    """R5: an amount just above 400 or 200, by one cent, already gets the offer."""
+    assert apply_special_offer(amount) == expected
